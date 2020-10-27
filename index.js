@@ -12,15 +12,16 @@ io.on('connection', (socket)=>{
     console.log('a user connected')
     //on chat message print to the console
     socket.on('chat message',msg =>{
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
+        //timestamp
+        let today = new Date();
+        let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
+        //timestamp
+        io.emit('chat message', (time + msg));
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
     })
 })
-
-
 
 //listen on localhost for now
 http.listen(3000,()=>{
