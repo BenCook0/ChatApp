@@ -10,8 +10,10 @@ app.get('/',(req,res) =>{
 //on connect and disconnect messages
 io.on('connection', (socket)=>{
     console.log('a user connected')
+    //on chat message print to the console
     socket.on('chat message',msg =>{
         console.log('message: ' + msg);
+        io.emit('chat message', msg);
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
