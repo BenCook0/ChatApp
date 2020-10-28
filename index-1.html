@@ -3,7 +3,9 @@
   <head>
     <title>Socket.IO chat</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+                margin: 0; padding: 0; box-sizing: border-box; 
+            }
             body { font: 13px Helvetica, Arial;   }
             form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
             form input {  border: 0; padding: 10px; width: 90%; margin-right: 0.5%;  }
@@ -13,7 +15,8 @@
             #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
-  <body id="whoami" >
+  <body>
+    <div id="whoami"></div>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -21,9 +24,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
+
         $(function(){
             var socket = io();
-            $('#whoami').attr("whoami","")
             $('form').submit(function(e){
                 e.preventDefault(); //prevents page reloading
                 socket.emit('chat message', $('#m').val());
@@ -32,15 +35,6 @@
             });
             socket.on('chat message', function(msg){
                 $('#messages').append($('<li>').text(msg));
-            });
-
-            socket.on('Joined',function(msg){
-                console.log("joined " + msg);
-                let whoami = $("#whoami");
-                if(whoami.attr("whoami") === ""){
-                    $('#whoami').attr("whoami",msg);
-                }
-                $('#messages').append($('<li>').text(msg + " has joined"));
             });
         });
     </script>
