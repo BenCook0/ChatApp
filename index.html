@@ -54,8 +54,10 @@
                   }
                 }
                 $('#messages').append($('<li>').text(msg.userID + " has joined"));
-                userList = msg.userlist;
-                updateUserList();
+            });
+            socket.on("updateUsers", function(msg){
+              userList = msg;
+              updateUserList();
             });
             $(window).bind('beforeunload', function(){
               socket.emit("removeUser",whoami.attr("whoami"));

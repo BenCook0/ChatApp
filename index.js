@@ -33,9 +33,9 @@ io.on('connection', (socket)=>{
     let data = {
         userID: user,
         history: chatHistory,
-        userlist: userList
     };
     //on chat message print to the console
+    io.emit("updateUsers",userList);
     io.emit("Joined", data);
     socket.on('chat message',msg =>{
         //chat history
@@ -57,7 +57,8 @@ io.on('connection', (socket)=>{
         console.log('user disconnected')
     });
     socket.on("removeUser", (user) =>{
-        console.log(user);
+        userList.splice(userList.indexOf(user),1);
+        io.emit("updateUsers",userList);
     })
 })
 
