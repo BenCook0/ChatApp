@@ -51,6 +51,7 @@
                     whoami.attr("whoami",msg.userID);
                     for(i in msg.history){
                       $('#messages').append($('<li>').text(msg.history[i]));
+                        console.log(msg.history[i])
                   }
                 }
                 $('#messages').append($('<li>').text(msg.userID + " has joined"));
@@ -59,6 +60,7 @@
               userList = msg;
               updateUserList();
             });
+            //as the user disconnect
             $(window).bind('beforeunload', function(){
               socket.emit("removeUser",whoami.attr("whoami"));
             });

@@ -23,8 +23,6 @@ function chatHistoryTrim(history){
     return(history)
 }
 
-test = ["a","b","c"]
-console.log(test.includes("c"))
 //on connect and disconnect messages
 io.on('connection', (socket)=>{    
     userID = userID + 1;
@@ -49,9 +47,6 @@ io.on('connection', (socket)=>{
     io.emit("Joined", data);
     socket.on('chat message',msg =>{
         //chat history
-        chatHistory.push(msg);
-        chatHistory = chatHistoryTrim(chatHistory)
-        //chat history
         //timestamp
         let today = new Date();
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
@@ -60,7 +55,7 @@ io.on('connection', (socket)=>{
         chatHistory.push(msg);
         chatHistory = chatHistoryTrim(chatHistory)
         console.log(chatHistory);
-        io.emit('chat message', (msg));
+        io.emit('chat message', (msg)); //CHANGE MESSAGE TO AN OBJECT THAT CONTAINS USER, COLOR AND MSG
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
@@ -70,7 +65,6 @@ io.on('connection', (socket)=>{
         io.emit("updateUsers",userList);
     })
 })
-
 //listen on localhost for now
 http.listen(3000,()=>{
     console.log("listening on port 3000")
