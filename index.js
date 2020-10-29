@@ -49,15 +49,14 @@ io.on('connection', (socket)=>{
     socket.on('chat message',msg =>{
         //chat history
         //timestamp
-        console.log(msg.userSend);
         let today = new Date();
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
         msg.messageToDisplay = (time + msg.messageToDisplay);
-        //timestamp
+        //MAY NEED TO UPDATE THIS WHEN CHANGING INTO COOKIES
         chatHistory.push(msg.messageToDisplay);
         chatHistory = chatHistoryTrim(chatHistory)
         console.log(chatHistory);
-        io.emit('chat message', (msg)); //CHANGE MESSAGE TO AN OBJECT THAT CONTAINS USER, COLOR AND MSG
+        io.emit('chat message', (msg)); 
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
