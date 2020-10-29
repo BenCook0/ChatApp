@@ -15,7 +15,6 @@
   </head>
   <body id="whoami" >
     <ul id="onlineusers"></ul>
-    <li> fuhk</li>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -24,9 +23,14 @@
     <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
         $(function(){
-          function didISend(message){
-            console.log(message);
-          }
+            let userList = [];
+            //updates the user list html (done in multiple places)
+            function updateUserList(){
+              $('#onlineusers').html("");
+                for(i in userList){
+                  $('#onlineusers').append($('<li>').text(userList[i]));
+                }
+            }
             var socket = io();
             let whoami = $("#whoami");
             whoami.attr("whoami","")
@@ -39,7 +43,6 @@
             //INSIDE THE .HTML ADD <B> AND </B> TO MAKE BOLD AFTER DOING USERNAME THING
             socket.on('chat message', function(msg){
                 $('#messages').append($('<li>').html(msg));
-                  didISend(msg);
             });
             //msg now is an object with userID and history
             socket.on('Joined',function(msg){
@@ -51,6 +54,11 @@
                   }
                 }
                 $('#messages').append($('<li>').text(msg.userID + " has joined"));
+                userList = msg.userlist;
+                updateUserList();
+            });
+            $(window).bind('beforeunload', function(){
+              socket.emit("removeUser",whoami.attr("whoami"));
             });
         });
     </script>

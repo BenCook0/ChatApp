@@ -26,11 +26,14 @@ function chatHistoryTrim(history){
 //on connect and disconnect messages
 io.on('connection', (socket)=>{    
     userID = userID + 1;
-    console.log('a user connected and assigned ID ' + userID);
+    let user = "User" + userID
+    console.log('a user connected and assigned ID ' + user);
+    userList.push(user)
     //userID and chat hisotry to emit
     let data = {
-        userID: "User" + userID,
-        history: chatHistory
+        userID: user,
+        history: chatHistory,
+        userlist: userList
     };
     //on chat message print to the console
     io.emit("Joined", data);
@@ -52,6 +55,9 @@ io.on('connection', (socket)=>{
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
+    });
+    socket.on("removeUser", (user) =>{
+        console.log(user);
     })
 })
 
