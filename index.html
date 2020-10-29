@@ -31,16 +31,20 @@
                 $('#m').val('');
                 return false;
             });
+            //INSIDE THE .HTML ADD <B> AND </B> TO MAKE BOLD AFTER DOING USERNAME THING
             socket.on('chat message', function(msg){
-                $('#messages').append($('<li>').text(msg));
+                $('#messages').append($('<li>').html(msg));
             });
-
+            //msg now is an object with userID and history
             socket.on('Joined',function(msg){
-                console.log("joined " + msg);
+                console.log("joined " + msg.userID);
                 if(whoami.attr("whoami") === ""){
-                    whoami.attr("whoami",msg);
+                    whoami.attr("whoami",msg.userID);
                 }
-                $('#messages').append($('<li>').text(msg + " has joined"));
+                $('#messages').append($('<li>').text(msg.userID + " has joined"));
+                for(i in msg.history){
+                  $('#messages').append($('<li>').text(msg.history[i]));
+                }
             });
         });
     </script>
