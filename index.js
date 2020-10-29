@@ -65,6 +65,11 @@ io.on('connection', (socket)=>{
         userList.splice(userList.indexOf(user),1);
         io.emit("updateUsers",userList);
     })
+    //maybe throw a message that says whos message changed
+    socket.on("userNameChange",(usernamechange) =>{
+        userList[userList.indexOf(usernamechange.oldname)] = usernamechange.newname;
+        io.emit("updateUsers",userList);
+    });
 })
 //listen on localhost for now
 http.listen(3000,()=>{

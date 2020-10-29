@@ -40,11 +40,29 @@
             whoami.attr("whoami","")
             $('form').submit(function(e){
                 e.preventDefault(); //prevents page reloading
-                let usermessage = {
+                messageText = $('#m').val();
+                //if the message begins with /color then execute color change
+                if(messageText.substring(0,7) === "/color "){
+                  console.log("change the color my guy")
+                } else if(messageText.substring(0,6) === "/name "){
+                  //if this username is already taken
+                  if(userList.includes(messageText.slice(6,messageText.length))){
+                    $('#messages').append($('<li>').html("<i>" + "This username has already been taken" + "</i>"));
+                  } else{
+                    let usernamechange = {
+                      oldname: whoami.attr("whoami"),
+                      newname: messageText.slice(6,messageText.length)
+                    }
+                    whoami.attr("whoami",usernamechange.newname);
+                    socket.emit("userNameChange", usernamechange);
+                  }
+                } else {
+                  let usermessage = {
                     userSend: whoami.attr("whoami"),
-                    messageToDisplay: whoami.attr("whoami") + ": " + $('#m').val(),
-                };
-                socket.emit('chat message', usermessage);
+                    messageToDisplay: whoami.attr("whoami") + ": " + messageText,
+                  };
+                  socket.emit('chat message', usermessage);
+                }
                 $('#m').val('');
                 return false;
             });
