@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
+    <meta charset = "UTF-8">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font: 13px Helvetica, Arial;   }
@@ -29,22 +30,31 @@
               $('#onlineusers').html("");
                 for(i in userList){
                   if(userList[i]=== whoami.attr("whoami")){
-                    $('#onlineusers').append($('<li>').html("<b>" + userList[i] + " (You) </b>"));
+                    $('#onlineusers').append($('<li>').html("<b>" + replaceEmojis(userList[i]) + " (You) </b>"));
                   } else{
-                    $('#onlineusers').append($('<li>').text(userList[i]));
+                    $('#onlineusers').append($('<li>').html(replaceEmojis(userList[i])));
                   }
                 }
             }
+            //replaces in text with emojis, called any time text is sent to the screen
+            function replaceEmojis(toreplace){
+                toreplace = toreplace.split(":)").join("&#128513");
+                toreplace = toreplace.split(":(").join("&#128577");
+                toreplace = toreplace.split(":o").join("&#128562");
+                return(toreplace);
+              }
             var socket = io();
             let whoami = $("#whoami");
             whoami.attr("whoami","")
+            //on submit form
             $('form').submit(function(e){
                 e.preventDefault(); //prevents page reloading
                 messageText = $('#m').val();
                 //if the message begins with /color then execute color change
                 if(messageText.substring(0,7) === "/color "){
                   console.log("change the color my guy")
-                } else if(messageText.substring(0,6) === "/name "){
+                }//if user types a /name 
+                else if(messageText.substring(0,6) === "/name "){
                   //if this username is already taken
                   if(userList.includes(messageText.slice(6,messageText.length))){
                     $('#messages').append($('<li>').html("<i>" + "This username has already been taken" + "</i>"));
@@ -69,23 +79,27 @@
             socket.on('chat message', function(msg){
               //checks if you were the one who sent the message, if so then bold it
                 if(msg.userSend === whoami.attr("whoami")){
-                  $('#messages').append($('<li>').html("<b>" + msg.messageToDisplay + "</b>"));
+                  $('#messages').append($('<li>').html("<b>" + replaceEmojis(msg.messageToDisplay) + "</b>"));
                 } else{
-                  $('#messages').append($('<li>').html(msg.messageToDisplay));
+                  $('#messages').append($('<li>').html(replaceEmojis(msg.messageToDisplay)));
                 }
             });
             //msg now is an object with userID and history
             socket.on('Joined',function(msg){
-                console.log("joined " + msg.userID);
+                console.log("joined " + replaceEmojis(msg.userID));
                 if(whoami.attr("whoami") === ""){
                     whoami.attr("whoami",msg.userID);
+                    //send a messsage saying that X person has connected
+                    let usermessage = {
+                        userSend: whoami.attr("whoami"),
+                        messageToDisplay: whoami.attr("whoami") + " has joined",
+                  };
+                    socket.emit('chat message', usermessage);
                     for(i in msg.history){
-                      $('#messages').append($('<li>').text(msg.history[i]));
-                        console.log(msg.history[i]);
+                      $('#messages').append($('<li>').html(replaceEmojis(msg.history[i])));
                   }
                 }
                 updateUserList();
-                $('#messages').append($('<li>').text(msg.userID + " has joined"));
             });
             socket.on("updateUsers", function(msg){
               userList = msg;

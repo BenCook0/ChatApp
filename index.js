@@ -23,6 +23,11 @@ function chatHistoryTrim(history){
     return(history)
 }
 
+function replaceEmojis(toreplace){
+    toreplace = toreplace.split(":)").join("&#128513")
+    return(toreplace);
+}
+
 //on connect and disconnect messages
 io.on('connection', (socket)=>{    
     userID = userID + 1;
