@@ -23,10 +23,20 @@ function chatHistoryTrim(history){
     return(history)
 }
 
+test = ["a","b","c"]
+console.log(test.includes("c"))
 //on connect and disconnect messages
 io.on('connection', (socket)=>{    
     userID = userID + 1;
     let user = "User" + userID
+    //ensures uniqueness if someone changes their name to UserX where X is already taken
+    while(true){
+        if(!userList.includes(user)){
+            break;
+        }
+        userID = userID + 1;
+        user = "User" + userID
+    }
     console.log('a user connected and assigned ID ' + user);
     userList.push(user)
     //userID and chat hisotry to emit
@@ -41,7 +51,6 @@ io.on('connection', (socket)=>{
         //chat history
         chatHistory.push(msg);
         chatHistory = chatHistoryTrim(chatHistory)
-        console.log(chatHistory);
         //chat history
         //timestamp
         let today = new Date();
