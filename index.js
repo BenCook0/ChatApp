@@ -45,14 +45,16 @@ io.on('connection', (socket)=>{
     //on chat message print to the console
     io.emit("updateUsers",userList);
     io.emit("Joined", data);
+    //msg is an object with userSend and messageToDisplay
     socket.on('chat message',msg =>{
         //chat history
         //timestamp
+        console.log(msg.userSend);
         let today = new Date();
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
-        msg = (time + msg);
+        msg.messageToDisplay = (time + msg.messageToDisplay);
         //timestamp
-        chatHistory.push(msg);
+        chatHistory.push(msg.messageToDisplay);
         chatHistory = chatHistoryTrim(chatHistory)
         console.log(chatHistory);
         io.emit('chat message', (msg)); //CHANGE MESSAGE TO AN OBJECT THAT CONTAINS USER, COLOR AND MSG

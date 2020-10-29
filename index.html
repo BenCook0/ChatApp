@@ -36,13 +36,22 @@
             whoami.attr("whoami","")
             $('form').submit(function(e){
                 e.preventDefault(); //prevents page reloading
-                socket.emit('chat message', whoami.attr("whoami") + ": " + $('#m').val());
+                let usermessage = {
+                    userSend: whoami.attr("whoami"),
+                    messageToDisplay: whoami.attr("whoami") + ": " + $('#m').val(),
+                };
+                socket.emit('chat message', usermessage);
                 $('#m').val('');
                 return false;
             });
             //INSIDE THE .HTML ADD <B> AND </B> TO MAKE BOLD AFTER DOING USERNAME THING
             socket.on('chat message', function(msg){
-                $('#messages').append($('<li>').html(msg));
+              //checks if you were the one who sent the message, if so then bold it
+                if(msg.userSend === whoami.attr("whoami")){
+                  $('#messages').append($('<li>').html("<b>" + msg.messageToDisplay + "</b>"));
+                } else{
+                  $('#messages').append($('<li>').html(msg.messageToDisplay));
+                }
             });
             //msg now is an object with userID and history
             socket.on('Joined',function(msg){
@@ -51,7 +60,7 @@
                     whoami.attr("whoami",msg.userID);
                     for(i in msg.history){
                       $('#messages').append($('<li>').text(msg.history[i]));
-                        console.log(msg.history[i])
+                        console.log(msg.history[i]);
                   }
                 }
                 $('#messages').append($('<li>').text(msg.userID + " has joined"));
