@@ -10,8 +10,10 @@ app.get('/',(req,res) =>{
 });
 
 let userID = 0;
-let chatHistoryLimit = 200; //CHANGE TO 200 BEFORE FINAL RELEASElet chatHistory = [];
-let chatHistory = []
+let chatHistoryLimit = 200;
+let chatHistory = [];
+
+let userList = [];
 
 //trims chat history according to the chat history limit
 function chatHistoryTrim(history){

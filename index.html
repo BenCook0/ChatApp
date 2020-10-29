@@ -14,6 +14,8 @@
     </style>
   </head>
   <body id="whoami" >
+    <ul id="onlineusers"></ul>
+    <li> fuhk</li>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -22,6 +24,9 @@
     <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
         $(function(){
+          function didISend(message){
+            console.log(message);
+          }
             var socket = io();
             let whoami = $("#whoami");
             whoami.attr("whoami","")
@@ -34,17 +39,18 @@
             //INSIDE THE .HTML ADD <B> AND </B> TO MAKE BOLD AFTER DOING USERNAME THING
             socket.on('chat message', function(msg){
                 $('#messages').append($('<li>').html(msg));
+                  didISend(msg);
             });
             //msg now is an object with userID and history
             socket.on('Joined',function(msg){
                 console.log("joined " + msg.userID);
                 if(whoami.attr("whoami") === ""){
                     whoami.attr("whoami",msg.userID);
+                    for(i in msg.history){
+                      $('#messages').append($('<li>').text(msg.history[i]));
+                  }
                 }
                 $('#messages').append($('<li>').text(msg.userID + " has joined"));
-                for(i in msg.history){
-                  $('#messages').append($('<li>').text(msg.history[i]));
-                }
             });
         });
     </script>
