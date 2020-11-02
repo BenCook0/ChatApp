@@ -50,9 +50,9 @@
               $('#onlineusers').html("");
                 for(i in userList){
                   if(userList[i]=== whoami.attr("whoami")){
-                    $('#onlineusers').append($('<li>').html("<b>" + replaceEmojis(userList[i]) + " (You) </b>"));
+                    $('#onlineusers').append($('<li style=color:' + userList[i].color + '>').html("<b>" + replaceEmojis(userList[i].user) + " (You) </b>"));
                   } else{
-                    $('#onlineusers').append($('<li>').html(replaceEmojis(userList[i])));
+                    $('#onlineusers').append($('<li style=color:' + userList[i].color + ">").html(replaceEmojis(userList[i].user)));
                   }
                 }
             }
@@ -127,13 +127,12 @@
             });
             socket.on('Joined',function(msg){
               if(whoami.attr("whoami") === ""){
-                    whoami.attr("whoami",msg[msg.length-1]);
+                    whoami.attr("whoami",msg[msg.length-1].user);
                     //assigns random color on entering the
-                    let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
-                    whatsmycolor.attr("whatsmycolor",randomColor)
+                    whatsmycolor.attr("whatsmycolor",msg[msg.length-1].color)
                     let newjoinmsg = {
                       userSend: whoami.attr("whoami"),
-                      messageColor: randomColor,
+                      messageColor: msg[msg.length-1].color,
                       messageToDisplay: whoami.attr("whoami") + " has joined",
                     }
                     socket.emit('chat message', newjoinmsg);

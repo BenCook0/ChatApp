@@ -13,8 +13,8 @@ let userID = 0;
 let chatHistoryLimit = 200;
 let chatHistory = [];
 
+//userlist is comprised of a user-color pair
 let userList = [];
-let colorList = [];
 
 //trims chat history according to the chat history limit
 function chatHistoryTrim(history){
@@ -25,19 +25,27 @@ function chatHistoryTrim(history){
 }
 
 //on connect and disconnect messages
-io.on('connection', (socket)=>{    
+io.on('connection', (socket)=>{
     userID = userID + 1;
     let user = "User" + userID
+
     //ensures uniqueness if someone changes their name to UserX where X is already taken
+    /*
     while(true){
-        if(!userList.includes(user)){
-            break;
+        for(i = 0; i < userList.length; i++){
+            if(us)
+
         }
         userID = userID + 1;
         user = "User" + userID
+    }*/
+    let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+    let userColorPair = {
+        user: "User" + userID,
+        color: randomColor
     }
     console.log('a user connected and assigned ID ' + user);
-    userList.push(user)
+    userList.push(userColorPair)
     io.emit("Joined", userList);
     io.emit("updateUsers",userList);
     //msg is an object with userSend and messageToDisplay
