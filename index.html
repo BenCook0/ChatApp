@@ -10,9 +10,8 @@
             form input {  border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
             form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
             ul {  list-style-type: none; margin: 0; padding: 0;
-              height: 95vh; border: 3px solid black; overflow-y: scroll;
-            display: inline-flexbox;}
-            #messages li { padding: 5px 10px; overflow-wrap: break-word;;}
+              height: 95vh; border: 3px solid black; overflow-y: scroll;}
+            ul li { padding: 5px 10px; overflow-wrap: break-word;}
             #messages li:nth-child(odd) { background: #eee; }
             .row{
               display: flex;
@@ -84,6 +83,12 @@
                       newname: messageText.slice(6,messageText.length)
                     }
                     whoami.attr("whoami",usernamechange.newname);
+                    //emit a message that says who changed his name
+                    let usermessage = {
+                      userSend: usernamechange.oldname,
+                      messageToDisplay: usernamechange.oldname + " has changed his name to " + usernamechange.newname
+                    }
+                    socket.emit('chat message', usermessage);
                     socket.emit("userNameChange", usernamechange);
                   }
                 } else {
