@@ -14,6 +14,7 @@ let chatHistoryLimit = 200;
 let chatHistory = [];
 
 let userList = [];
+let colorList = [];
 
 //trims chat history according to the chat history limit
 function chatHistoryTrim(history){
