@@ -44,6 +44,7 @@
     <script>
         $(function(){
             let userList = [];
+            let myChatHistory = [];
             //updates the user list html (done in multiple places)
             function updateUserList(){
               $('#onlineusers').html("");
@@ -64,9 +65,14 @@
               }
             function renderMessages(msg){
               $('#messages').html("");
+              console.log(myChatHistory);
+              console.log(msg);
               for(i in msg){
-                if(msg[i].userSend === whoami.attr("whoami")){
+                if(msg[i].userSend === whoami.attr("whoami") || myChatHistory.includes(msg[i].messageToDisplay)){
                   $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
+                  if(!myChatHistory.includes(msg[i].messageToDisplay)){
+                    myChatHistory.push(msg[i].messageToDisplay);
+                  }
                 } else{
                   $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html(replaceEmojis(msg[i].messageToDisplay)));
                 }
