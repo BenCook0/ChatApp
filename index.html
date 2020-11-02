@@ -64,11 +64,10 @@
                 return(toreplace);
               }
             function renderMessages(msg){
-              $('#messages').html("");
-              console.log(myChatHistory);
-              console.log(msg);
-              for(i in msg){
-                if(msg[i].userSend === whoami.attr("whoami") || myChatHistory.includes(msg[i].messageToDisplay)){
+              $('#messages').html(""); 
+              console.log(msg.length)
+              for(i = 0; i < msg.length; i++){
+                if((msg[i].userSend === whoami.attr("whoami") && i === (msg.length-1)) || myChatHistory.includes(msg[i].messageToDisplay)){
                   $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
                   if(!myChatHistory.includes(msg[i].messageToDisplay)){
                     myChatHistory.push(msg[i].messageToDisplay);
