@@ -4,19 +4,39 @@
     <title>Socket.IO chat</title>
     <meta charset = "UTF-8">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font: 13px Helvetica, Arial;   }
-            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-            form input {  border: 0; padding: 10px; width: 90%; margin-right: 0.5%;  }
+        * { margin: auto; padding: 0; box-sizing: border-box; max-width: 960px; }
+            body { font: 13px Helvetica, Arial;  }
+            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; height: 5vh;}
+            form input {  border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
             form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-            #messages {  list-style-type: none; margin: 0; padding: 0; }
-            #messages li { padding: 5px 10px; }
+            ul {  list-style-type: none; margin: 0; padding: 0;
+              height: 95vh; border: 3px solid black; overflow-y: scroll;
+            display: inline-flexbox;}
+            #messages li { padding: 5px 10px; overflow-wrap: break-word;;}
             #messages li:nth-child(odd) { background: #eee; }
+            .row{
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              width: 100%;
+            }
+            .column{
+              display: flex;
+              flex-direction: column;
+              flex-basis: 100%;
+              flex:1
+            }
     </style>
   </head>
   <body id="whoami" >
-    <ul id="onlineusers"></ul>
-    <ul id="messages"></ul>
+    <div class = 'row'> 
+      <div class = "column">
+        <ul id="messages"></ul>
+      </div>
+      <div class = "column">
+        <ul id="onlineusers"></ul>
+      </div>
+    </div>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
@@ -83,6 +103,9 @@
                 } else{
                   $('#messages').append($('<li>').html(replaceEmojis(msg.messageToDisplay)));
                 }
+                //scroll to the bottom on a chat message when received
+                $("#messages").scrollTop($("#messages")[0].scrollHeight);
+
             });
             //msg now is an object with userID and history
             socket.on('Joined',function(msg){
