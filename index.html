@@ -28,7 +28,7 @@
     </style>
   </head>
   <body id="whoami" >
-    <div class = 'row'> 
+    <div id = "whatsmycolor" class = 'row'> 
       <div class = "column">
         <ul id="messages"></ul>
       </div>
@@ -66,15 +66,17 @@
               $('#messages').html("");
               for(i in msg){
                 if(msg[i].userSend === whoami.attr("whoami")){
-                  $('#messages').append($('<li>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
+                  $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
                 } else{
-                  $('#messages').append($('<li>').html(replaceEmojis(msg[i].messageToDisplay)));
+                  $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html(replaceEmojis(msg[i].messageToDisplay)));
                 }
               }
             }
             var socket = io();
             let whoami = $("#whoami");
-            whoami.attr("whoami","")
+            whoami.attr("whoami","");
+            let whatsmycolor = $("#whatsmycolor");
+            whatsmycolor.attr("whatsmycolor","");
             //on submit form
             $('form').submit(function(e){
                 e.preventDefault(); //prevents page reloading
@@ -96,6 +98,7 @@
                     //emit a message that says who changed his name
                     let usermessage = {
                       userSend: usernamechange.oldname,
+                      messageColor: whatsmycolor.attr("whatsmycolor"),
                       messageToDisplay: usernamechange.oldname + " has changed his name to " + usernamechange.newname
                     }
                     socket.emit('chat message', usermessage);
@@ -104,6 +107,7 @@
                 } else {
                   let usermessage = {
                     userSend: whoami.attr("whoami"),
+                    messageColor: whatsmycolor.attr("whatsmycolor"),
                     messageToDisplay: whoami.attr("whoami") + ": " + messageText,
                   };
                   socket.emit('chat message', usermessage);
@@ -116,12 +120,15 @@
               renderMessages(msg);
               $("#messages").scrollTop($("#messages")[0].scrollHeight);
             });
-
             socket.on('Joined',function(msg){
               if(whoami.attr("whoami") === ""){
                     whoami.attr("whoami",msg[msg.length-1]);
+                    //assigns random color on entering the
+                    let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+                    whatsmycolor.attr("whatsmycolor",randomColor)
                     let newjoinmsg = {
                       userSend: whoami.attr("whoami"),
+                      messageColor: randomColor,
                       messageToDisplay: whoami.attr("whoami") + " has joined",
                     }
                     socket.emit('chat message', newjoinmsg);
