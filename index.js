@@ -42,14 +42,9 @@ io.on('connection', (socket)=>{
     }
     console.log('a user connected and assigned ID ' + user);
     userList.push(user)
-    //userID and chat hisotry to emit
-    let data = {
-        userID: user,
-        history: chatHistory,
-    };
-    //on chat message print to the console
+    
+    io.emit("Joined", userList);
     io.emit("updateUsers",userList);
-    io.emit("Joined", data);
     //msg is an object with userSend and messageToDisplay
     socket.on('chat message',msg =>{
         //chat history
@@ -58,10 +53,10 @@ io.on('connection', (socket)=>{
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
         msg.messageToDisplay = (time + msg.messageToDisplay);
         //MAY NEED TO UPDATE THIS WHEN CHANGING INTO COOKIES
-        chatHistory.push(msg.messageToDisplay);
+        chatHistory.push(msg);
         chatHistory = chatHistoryTrim(chatHistory)
         console.log(chatHistory);
-        io.emit('chat message', (msg)); 
+        io.emit('chat message', (chatHistory)); 
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
@@ -70,7 +65,6 @@ io.on('connection', (socket)=>{
         userList.splice(userList.indexOf(user),1);
         io.emit("updateUsers",userList);
     })
-    //maybe throw a message that says whos message changed
     socket.on("userNameChange",(usernamechange) =>{
         userList[userList.indexOf(usernamechange.oldname)] = usernamechange.newname;
         io.emit("updateUsers",userList);

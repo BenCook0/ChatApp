@@ -62,6 +62,16 @@
                 toreplace = toreplace.split(":o").join("&#128562");
                 return(toreplace);
               }
+            function renderMessages(msg){
+              $('#messages').html("");
+              for(i in msg){
+                if(msg[i].userSend === whoami.attr("whoami")){
+                  $('#messages').append($('<li>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
+                } else{
+                  $('#messages').append($('<li>').html(replaceEmojis(msg[i].messageToDisplay)));
+                }
+              }
+            }
             var socket = io();
             let whoami = $("#whoami");
             whoami.attr("whoami","")
@@ -102,32 +112,20 @@
                 return false;
             });
             socket.on('chat message', function(msg){
-              //checks if you were the one who sent the message, if so then bold it
-                if(msg.userSend === whoami.attr("whoami")){
-                  $('#messages').append($('<li>').html("<b>" + replaceEmojis(msg.messageToDisplay) + "</b>"));
-                } else{
-                  $('#messages').append($('<li>').html(replaceEmojis(msg.messageToDisplay)));
-                }
-                //scroll to the bottom on a chat message when received
-                $("#messages").scrollTop($("#messages")[0].scrollHeight);
-
+              //scroll to the bottom on a chat message when received
+              renderMessages(msg);
+              $("#messages").scrollTop($("#messages")[0].scrollHeight);
             });
-            //msg now is an object with userID and history
+
             socket.on('Joined',function(msg){
-                console.log("joined " + replaceEmojis(msg.userID));
-                if(whoami.attr("whoami") === ""){
-                    whoami.attr("whoami",msg.userID);
-                    //send a messsage saying that X person has connected
-                    let usermessage = {
-                        userSend: whoami.attr("whoami"),
-                        messageToDisplay: whoami.attr("whoami") + " has joined",
-                  };
-                    socket.emit('chat message', usermessage);
-                    for(i in msg.history){
-                      $('#messages').append($('<li>').html(replaceEmojis(msg.history[i])));
+              if(whoami.attr("whoami") === ""){
+                    whoami.attr("whoami",msg[msg.length-1]);
+                    let newjoinmsg = {
+                      userSend: whoami.attr("whoami"),
+                      messageToDisplay: whoami.attr("whoami") + " has joined",
+                    }
+                    socket.emit('chat message', newjoinmsg);
                   }
-                }
-                updateUserList();
             });
             socket.on("updateUsers", function(msg){
               userList = msg;
