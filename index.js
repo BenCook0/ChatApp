@@ -27,24 +27,29 @@ function chatHistoryTrim(history){
 //on connect and disconnect messages
 io.on('connection', (socket)=>{
     userID = userID + 1;
-    let user = "User" + userID
-
     //ensures uniqueness if someone changes their name to UserX where X is already taken
-    /*
+    let isUnique = true;
     while(true){
         for(i = 0; i < userList.length; i++){
-            if(us)
-
+            //the chosen ID is not unique
+            if(userList[i].user === ("User" + userID)){
+                isUnique = false;
+            }
         }
-        userID = userID + 1;
-        user = "User" + userID
-    }*/
+        if(isUnique){
+            break;
+        } else{
+            console.log("hi")
+            userID = userID + 1;
+            isUnique = true;
+        }
+    }
     let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
     let userColorPair = {
         user: "User" + userID,
         color: randomColor
     }
-    console.log('a user connected and assigned ID ' + user);
+    console.log('a user connected and assigned ID ' + userColorPair.user);
     userList.push(userColorPair)
     io.emit("Joined", userList);
     io.emit("updateUsers",userList);
@@ -58,22 +63,28 @@ io.on('connection', (socket)=>{
         //MAY NEED TO UPDATE THIS WHEN CHANGING INTO COOKIES
         chatHistory.push(msg);
         chatHistory = chatHistoryTrim(chatHistory)
-        console.log(chatHistory);
         io.emit('chat message', (chatHistory)); 
     })
     socket.on('disconnect', () =>{
         console.log('user disconnected')
     });
     socket.on("removeUser", (user) =>{
-        userList.splice(userList.indexOf(user),1);
+        for(i = 0; i < userList.length; i++){
+            if(userList[i].user === user){
+                userList.splice(i,1)
+            }
+        }
         io.emit("updateUsers",userList);
     })
+    //check for uniqueness is done clientside
     socket.on("userNameChange",(usernamechange) =>{
+        console.log(userList);
         for(i = 0; i < userList.length; i++){
-            if(usernamechange.oldname = userList[i].user){
+            if(usernamechange.oldname === userList[i].user){
                 userList[i].user = usernamechange.newname;
             }
         }
+        console.log(userList);
         io.emit("updateUsers",userList);
     });
     socket.on("colorChange",(colorchange)=>{

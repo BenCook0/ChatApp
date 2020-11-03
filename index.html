@@ -108,7 +108,13 @@
                 }//if user types a /name 
                 else if(messageText.substring(0,6) === "/name "){
                   //if this username is already taken
-                  if(userList.includes(messageText.slice(6,messageText.length))){
+                  let isNotUnique = false;
+                  for(i = 0; i < userList.length; i++){
+                    if (userList[i].user === messageText.slice(6,messageText.length)) {
+                      isNotUnique = true;
+                    }
+                  }
+                  if(isNotUnique){
                     $('#messages').append($('<li>').html("<i>" + "This username has already been taken" + "</i>"));
                   } else{
                     let usernamechange = {
