@@ -65,7 +65,6 @@
               }
             function renderMessages(msg){
               $('#messages').html(""); 
-              console.log(msg.length)
               for(i = 0; i < msg.length; i++){
                 if((msg[i].userSend === whoami.attr("whoami") && i === (msg.length-1)) || myChatHistory.includes(msg[i].messageToDisplay)){
                   $('#messages').append($('<li style=color:' + msg[i].messageColor + '>').html("<b>" + replaceEmojis(msg[i].messageToDisplay) + "</b>"));
@@ -88,7 +87,24 @@
                 messageText = $('#m').val();
                 //if the message begins with /color then execute color change
                 if(messageText.substring(0,7) === "/color "){
-                  console.log("change the color my guy")
+                  let re = /[0-9A-Fa-f]{6}/g;
+                  if(re.test(messageText.slice(7,messageText.length))){
+                    let colorChange = {
+                      user: whoami.attr("whoami"),
+                      newcolor:"#" + messageText.slice(7,messageText.length),
+                    }
+                    socket.emit("colorChange", colorChange);
+                    whatsmycolor.attr("whatsmycolor",colorChange.newcolor);
+                    //emit a message that says you changed your color
+                    let usermessage = {
+                      userSend: whoami.attr("whoami"),
+                      messageColor: colorChange.newcolor,
+                      messageToDisplay: whoami.attr("whoami") + " has changed his color"
+                    }
+                    socket.emit('chat message', usermessage);
+                  } else{
+                    $('#messages').append($('<li>').html("<i>" + "The color you entered is not a valid hex number RRGGBB" + "</i>"));
+                  }
                 }//if user types a /name 
                 else if(messageText.substring(0,6) === "/name "){
                   //if this username is already taken
@@ -97,7 +113,7 @@
                   } else{
                     let usernamechange = {
                       oldname: whoami.attr("whoami"),
-                      newname: messageText.slice(6,messageText.length)
+                      newname: messageText.slice(6,messageText.length),
                     }
                     whoami.attr("whoami",usernamechange.newname);
                     //emit a message that says who changed his name

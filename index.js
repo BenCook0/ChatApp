@@ -69,7 +69,25 @@ io.on('connection', (socket)=>{
         io.emit("updateUsers",userList);
     })
     socket.on("userNameChange",(usernamechange) =>{
-        userList[userList.indexOf(usernamechange.oldname)] = usernamechange.newname;
+        for(i = 0; i < userList.length; i++){
+            if(usernamechange.oldname = userList[i].user){
+                userList[i].user = usernamechange.newname;
+            }
+        }
+        io.emit("updateUsers",userList);
+    });
+    socket.on("colorChange",(colorchange)=>{
+        //change both the color of the message history and the userlist
+        for(i = 0; i < chatHistory.length; i++){
+            if(chatHistory[i].userSend === colorchange.user){
+                chatHistory[i].messageColor = colorchange.newcolor;
+            }
+        }
+        for(i = 0; i < userList.length; i++){
+            if(userList[i].user === colorchange.user){
+                userList[i].color = colorchange.newcolor;
+            }
+        }
         io.emit("updateUsers",userList);
     });
 })
