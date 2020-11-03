@@ -49,7 +49,7 @@
             function updateUserList(){
               $('#onlineusers').html("");
                 for(i in userList){
-                  if(userList[i]=== whoami.attr("whoami")){
+                  if(userList[i].user === whoami.attr("whoami")){
                     $('#onlineusers').append($('<li style=color:' + userList[i].color + '>').html("<b>" + replaceEmojis(userList[i].user) + " (You) </b>"));
                   } else{
                     $('#onlineusers').append($('<li style=color:' + userList[i].color + ">").html(replaceEmojis(userList[i].user)));
