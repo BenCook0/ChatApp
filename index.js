@@ -26,33 +26,41 @@ function chatHistoryTrim(history){
 
 //on connect and disconnect messages
 io.on('connection', (socket)=>{
-    userID = userID + 1;
-    //ensures uniqueness if someone changes their name to UserX where X is already taken
-    let isUnique = true;
-    while(true){
-        for(i = 0; i < userList.length; i++){
-            //the chosen ID is not unique
-            if(userList[i].user === ("User" + userID)){
-                isUnique = false;
+    io.emit("CookieCheck",userList);
+    socket.on("CookieConfirm",cookiemsg =>{
+        if(cookiemsg === ""){
+        userID = userID + 1;
+        //ensures uniqueness if someone changes their name to UserX where X is already taken
+        let isUnique = true;
+        while(true){
+                for(i = 0; i < userList.length; i++){
+                    //the chosen ID is not unique
+                    if(userList[i].user === ("User" + userID)){
+                        isUnique = false;
+                    }
+                }
+                if(isUnique){
+                    break;
+                } else{
+                    userID = userID + 1;
+                    isUnique = true;
+                }
             }
+            let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+            let userColorPair = {
+                user: "User" + userID,
+                color: randomColor
+                }
+            console.log('a user has joined for the first time and assigned ID ' + userColorPair.user);
+            userList.push(userColorPair)
+        } else {
+            console.log('a user re-connected and assigned ID ' + cookiemsg.user);
+            userList.push(cookiemsg)
         }
-        if(isUnique){
-            break;
-        } else{
-            console.log("hi")
-            userID = userID + 1;
-            isUnique = true;
-        }
-    }
-    let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
-    let userColorPair = {
-        user: "User" + userID,
-        color: randomColor
-    }
-    console.log('a user connected and assigned ID ' + userColorPair.user);
-    userList.push(userColorPair)
-    io.emit("Joined", userList);
-    io.emit("updateUsers",userList);
+        io.emit("Joined", userList);
+        io.emit("updateUsers",userList);
+        console.log(userList)
+    })
     //msg is an object with userSend and messageToDisplay
     socket.on('chat message',msg =>{
         //chat history
@@ -60,7 +68,6 @@ io.on('connection', (socket)=>{
         let today = new Date();
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
         msg.messageToDisplay = (time + msg.messageToDisplay);
-        //MAY NEED TO UPDATE THIS WHEN CHANGING INTO COOKIES
         chatHistory.push(msg);
         chatHistory = chatHistoryTrim(chatHistory)
         io.emit('chat message', (chatHistory)); 

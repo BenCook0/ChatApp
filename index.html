@@ -45,6 +45,7 @@
         $(function(){
             let userList = [];
             let myChatHistory = [];
+
             //updates the user list html (done in multiple places)
             function updateUserList(){
               $('#onlineusers').html("");
@@ -159,13 +160,44 @@
                     }
                     socket.emit('chat message', newjoinmsg);
                   }
-            });
+                  document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+                });
             socket.on("updateUsers", function(msg){
               userList = msg;
               updateUserList();
             });
+            //cookies
+            socket.on("CookieCheck", function(list){
+            //only if someone is just renetering the server
+            if(whoami.attr("whoami") === ""){
+              let userColorPair = "";
+                //if the user has a cookie with username
+                if(document.cookie.indexOf("username=") !== -1){
+                  let cookieData = document.cookie.split(";");
+                  let potentialName = cookieData[0].split("=")[1]
+                  let potentialColor = cookieData[1].split("=")[1]
+                    //checks if username has been take since
+                    for(i = 0; i < list.length; i++){
+                      if(list[i].user === potentialName){
+                        socket.emit("CookieConfirm",userColorPair);
+                        return;
+                    }
+                  }
+                userColorPair = {
+                  user: potentialName,
+                  color: potentialColor,
+                }
+                socket.emit("CookieConfirm",userColorPair);
+              } else {
+                socket.emit("CookieConfirm",userColorPair);
+              }
+            }
+            });
             //as the user disconnect
             $(window).bind('beforeunload', function(){
+              //when someone leaves the page save username and color in a cookie
+              document.cookie = "username=" + whoami.attr("whoami") + ";"
+              document.cookie = "color=" + whatsmycolor.attr("whatsmycolor") + ";"
               socket.emit("removeUser",whoami.attr("whoami"));
             });
         });
