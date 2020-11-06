@@ -19,7 +19,7 @@ let userList = [];
 //trims chat history according to the chat history limit
 function chatHistoryTrim(history){
     if(history.length > chatHistoryLimit){
-        history = history.slice(history.length - chatHistoryLimit,history.length)
+        history = history.slice(0,chatHistoryLimit)
     } 
     return(history)
 }
@@ -68,7 +68,7 @@ io.on('connection', (socket)=>{
         let today = new Date();
         let time = "<" + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + ">  ";
         msg.messageToDisplay = (time + msg.messageToDisplay);
-        chatHistory.push(msg);
+        chatHistory.unshift(msg);
         chatHistory = chatHistoryTrim(chatHistory)
         io.emit('chat message', (chatHistory)); 
     })

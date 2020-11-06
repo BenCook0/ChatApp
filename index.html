@@ -13,6 +13,7 @@
               height: 95vh; border: 3px solid black; overflow-y: scroll;}
             ul li { padding: 5px 10px; overflow-wrap: break-word;}
             #messages li:nth-child(odd) { background: #eee; }
+            #onlineusers li:nth-child(even) { background: #FFFFFF; }
             .row{
               display: flex;
               flex-direction: row;
@@ -29,10 +30,15 @@
             #onlineusers{
               width: 20vw;
               max-width: 192px;
+              background: #eee;
             }
             #messages{
               width: 80vw;
               max-width: 768px;
+              transform: rotate(180deg);
+            }
+            #messages li{
+              transform: rotate(180deg);
             }
     </style>
   </head>
@@ -113,7 +119,7 @@
                     }
                     socket.emit('chat message', usermessage);
                   } else{
-                    $('#messages').append($('<li>').html("<i>" + "The color you entered is not a valid hex number RRGGBB" + "</i>"));
+                    $('#messages').prepend($('<li>').html("<i>" + "The color you entered is not a valid hex number RRGGBB" + "</i>"));
                   }
                 }//if user types a /name 
                 else if(messageText.substring(0,6) === "/name "){
@@ -125,7 +131,7 @@
                     }
                   }
                   if(isNotUnique){
-                    $('#messages').append($('<li>').html("<i>" + "This username has already been taken" + "</i>"));
+                    $('#messages').prepend($('<li>').html("<i>" + "This username has already been taken" + "</i>"));
                   } else{
                     let usernamechange = {
                       oldname: whoami.attr("whoami"),
@@ -157,7 +163,7 @@
             socket.on('chat message', function(msg){
               //scroll to the bottom on a chat message when received
               renderMessages(msg);
-              $("#messages").scrollTop($("#messages")[0].scrollHeight);
+              $("#messages").scrollTop($("#messages")[0]);
             });
             socket.on('Joined',function(msg){
               if(whoami.attr("whoami") === ""){
