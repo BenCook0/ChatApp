@@ -22,8 +22,17 @@
             .column{
               display: flex;
               flex-direction: column;
-              flex-basis: 100%;
-              flex:1
+              flex-basis: auto;
+              flex:1;
+              overflow-wrap: break-word;
+            }
+            #onlineusers{
+              width: 20vw;
+              max-width: 192px;
+            }
+            #messages{
+              width: 80vw;
+              max-width: 768px;
             }
     </style>
   </head>
@@ -140,6 +149,8 @@
                   };
                   socket.emit('chat message', usermessage);
                 }
+                document.cookie = "username=" + whoami.attr("whoami") + ";"
+                document.cookie = "color=" + whatsmycolor.attr("whatsmycolor") + ";"
                 $('#m').val('');
                 return false;
             });
@@ -160,7 +171,6 @@
                     }
                     socket.emit('chat message', newjoinmsg);
                   }
-                  document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
                 });
             socket.on("updateUsers", function(msg){
               userList = msg;
@@ -173,9 +183,28 @@
               let userColorPair = "";
                 //if the user has a cookie with username
                 if(document.cookie.indexOf("username=") !== -1){
+                  /*
+                  const potentialName = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('color'))
+                    .split('=')[1];
+
+                    const potentialColor = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('username'))
+                    .split('=')[1]; */
+
                   let cookieData = document.cookie.split(";");
-                  let potentialName = cookieData[0].split("=")[1]
-                  let potentialColor = cookieData[1].split("=")[1]
+                  console.log(cookieData);
+                  let potentialColor;
+                  let potentialName
+                  if(cookieData[0].startsWith("color")){
+                    potentialColor = cookieData[0].split("=")[1];
+                    potentialName = cookieData[1].split("=")[1]
+                  } else {
+                    potentialName = cookieData[0].split("=")[1];
+                    potentialColor = cookieData[1].split("=")[1]
+                  }
                     //checks if username has been take since
                     for(i = 0; i < list.length; i++){
                       if(list[i].user === potentialName){
@@ -189,6 +218,7 @@
                 }
                 socket.emit("CookieConfirm",userColorPair);
               } else {
+                //if no cookie then make a new username
                 socket.emit("CookieConfirm",userColorPair);
               }
             }
