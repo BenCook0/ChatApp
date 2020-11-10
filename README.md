@@ -1,6 +1,12 @@
-# ChatApp
+ChatApp
 
 This chat application is for the Class SENG 513 Assignment 3
+
+Benjamin Cook
+30037563
+
+Github Repsitory Link: https://github.com/BenCook0/ChatApp
+
 
 To run the code simply pull the code down from github, navigate to the repository using the command prompt, and type node index.js
 This will run the server, then enter a browser and type localhost:3000. The browser will open the chat application.
